@@ -245,6 +245,14 @@ static int mipi_dsi_on(struct platform_device *pdev)
 	fbi = mfd->fbi;
 	var = &fbi->var;
 	pinfo = &mfd->panel_info;
+	/*
+	 * Now first priority is to turn on LCD quickly for better
+	 * user experience. We set current task to higher priority
+	 * and restore it after panel is on.
+	 */
+	old_nice = task_nice(current);
+	if (old_nice > -20)
+		set_user_nice(current, -20);
 
 	/*
 	 * Now first priority is to turn on LCD quickly for better
