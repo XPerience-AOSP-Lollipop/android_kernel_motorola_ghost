@@ -115,14 +115,14 @@ static void __tty_buffer_flush(struct tty_struct *tty)
 	struct tty_bufhead *buf = &tty->buf;
 	struct tty_buffer *thead;
 
-	if (unlikely(buf->head == NULL))
+	if (tty->buf.head == NULL)
 		return;
-	while ((thead = buf->head->next) != NULL) {
-		tty_buffer_free(tty, buf->head);
-		buf->head = thead;
+	while ((thead = tty->buf.head->next) != NULL) {
+		tty_buffer_free(tty, tty->buf.head);
+		tty->buf.head = thead;
 	}
-	WARN_ON(buf->head != buf->tail);
-	buf->head->read = buf->head->commit;
+	WARN_ON(tty->buf.head != tty->buf.tail);
+	tty->buf.head->read = tty->buf.head->commit;
 }
 
 /**
