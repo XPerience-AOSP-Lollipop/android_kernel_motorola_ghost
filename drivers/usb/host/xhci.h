@@ -1518,14 +1518,6 @@ struct xhci_hcd {
  * The workaround is to give some delay (5 mac2_clk -> UTMI clock = 60 MHz ->
  * (16.66 ns x 5 = 84ns) ~100ns after writing to the PORTSC register.
  */
-<<<<<<< HEAD
-#define XHCI_PORTSC_DELAY	(1 << 10)
-#define XHCI_TRUST_TX_LENGTH	(1 << 10)
-#define XHCI_SPURIOUS_REBOOT	(1 << 13)
-#define XHCI_COMP_MODE_QUIRK	(1 << 14)
-#define XHCI_AVOID_BEI		(1 << 15)
->>>>>>> v3.4.39
-=======
 #define XHCI_PORTSC_DELAY	(1 << 16)
 /*
  * In Synopsis DWC3 controller, XHCI RESET takes some time complete. If PIPE
@@ -1536,7 +1528,8 @@ struct xhci_hcd {
  */
 #define XHCI_RESET_DELAY	(1 << 17)
 #define XHCI_PLAT		(1 << 18)
->>>>>>> 043cc5b... v3.4.63
+#define XHCI_SLOW_SUSPEND	(1 << 18)
+
 	unsigned int		num_active_eps;
 	unsigned int		limit_active_eps;
 	/* There are two roothubs to keep track of bus suspend info for */
