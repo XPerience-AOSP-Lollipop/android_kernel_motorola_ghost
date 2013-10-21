@@ -1658,7 +1658,7 @@ endif # CPU_FREQ_MSM
 
 config CPU_VOLTAGE_TABLE
 	bool "Enable CPU Voltage Table via sysfs for adjustements"
-	default n
+	default y
 	help
 	  Krait User Votlage Control
 
