@@ -20,6 +20,12 @@
 #ifndef _LINUX_BINDER_H
 #define _LINUX_BINDER_H
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_ANDROID_BINDER_IPC_32BIT
+#define BINDER_IPC_32BIT 1
+#endif
+>>>>>>> c89e399... Staging: android: binder: Support concurrent 32 bit and 64 bit processes.
 
 #include "uapi/binder.h"
 
