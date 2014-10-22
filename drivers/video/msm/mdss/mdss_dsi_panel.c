@@ -14,6 +14,7 @@
 #include <linux/interrupt.h>
 #include <linux/of.h>
 #include <linux/slab.h>
+#include <linux/lcd_notify.h>
 
 #include "mdss_dsi.h"
 
@@ -37,6 +38,8 @@ static int mdss_dsi_panel_on(struct mdss_panel_data *pdata)
 	pr_debug("%s:%d, debug info (mode) : %d\n", __func__, __LINE__,
 		 mipi->mode);
 
+	lcd_notifier_call_chain(LCD_EVENT_ON_START);
+
 	if (mipi->mode == DSI_VIDEO_MODE) {
 		mdss_dsi_cmds_tx(pdata, &dsi_panel_tx_buf, dsi_panel_on_cmds,
 			num_of_on_cmds);
@@ -44,6 +47,8 @@ static int mdss_dsi_panel_on(struct mdss_panel_data *pdata)
 		pr_err("%s:%d, CMD MODE NOT SUPPORTED", __func__, __LINE__);
 		return -EINVAL;
 	}
+
+    lcd_notifier_call_chain(LCD_EVENT_ON_END);
 
 	return 0;
 }
@@ -56,6 +61,8 @@ static int mdss_dsi_panel_off(struct mdss_panel_data *pdata)
 
 	pr_debug("%s:%d, debug info\n", __func__, __LINE__);
 
+    lcd_notifier_call_chain(LCD_EVENT_OFF_START);
+
 	if (mipi->mode == DSI_VIDEO_MODE) {
 		mdss_dsi_cmds_tx(pdata, &dsi_panel_tx_buf, dsi_panel_off_cmds,
 			num_of_off_cmds);
@@ -63,6 +70,8 @@ static int mdss_dsi_panel_off(struct mdss_panel_data *pdata)
 		pr_debug("%s:%d, CMD mode not supported", __func__, __LINE__);
 		return -EINVAL;
 	}
+
+	lcd_notifier_call_chain(LCD_EVENT_OFF_END);
 
 	return 0;
 }
