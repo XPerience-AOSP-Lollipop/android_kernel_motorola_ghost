@@ -6,6 +6,7 @@
  *                      Jun Nakajima <jun.nakajima@intel.com>
  *            (c)  2013 The Linux Foundation. All rights reserved.
  *            (c)  2014 Paul Reioux (aka Faux123)
+ *						(c)  2015-2016 Carlos jesus (aka TeamMEX)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -41,7 +42,7 @@
 #define MAX_FREQUENCY_UP_THRESHOLD		(100)
 #define MIN_FREQUENCY_DOWN_DIFFERENTIAL		(1)
 
-#ifdef CONFIG_ARCH_MSM8974
+#ifdef CONFIG_ARCH_MSM8960
 #define DEF_POWER_SAVE_FREQUENCY		(1100000)
 #define DEF_TWO_PHASE_FREQUENCY			(1700000)
 #define DBS_INPUT_EVENT_MIN_FREQ		(1574400)
@@ -1638,4 +1639,3 @@ fs_initcall(cpufreq_gov_dbs_init);
 module_init(cpufreq_gov_dbs_init);
 #endif
 module_exit(cpufreq_gov_dbs_exit);
-
