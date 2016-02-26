@@ -114,7 +114,7 @@ static inline void offline_cpu(void)
 	default:
 	break;
 }
-	for(cpu = 2; cpu >(suspend_cpu_num - 1); cpu--) {
+	for(cpu = 1; cpu >(suspend_cpu_num - 1); cpu--) {
 		if(cpu_online(cpu))
 			cpu_down(cpu);
 }
@@ -176,7 +176,7 @@ an error indication
 static void __ref alessa_plug_boost_work_fn(struct work_struct *work)
 {
 	int cpu;
-	for(cpu = 1; cpu < 2; cpu++){
+	for(cpu = 1; cpu < 1; cpu++){
 		if(cpu_is_offline(cpu))
 			cpu_up(cpu);
 	}
