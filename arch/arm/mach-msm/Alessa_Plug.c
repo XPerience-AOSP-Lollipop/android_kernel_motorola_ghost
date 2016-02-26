@@ -55,7 +55,7 @@
 #define ALESSA_MAINTENANCE 0
 
 static int suspend_cpu_num = 1;
-static int resume_cpu_num = 2;
+static int resume_cpu_num = 1;
 static int endurance_level = 0;
 static int device_cpu = 1;
 static int core_limit = 2;
@@ -108,7 +108,7 @@ static inline void offline_cpu(void)
 	unsigned int cpu;
 	switch(endurance_level){
 	case 1:
-		if(suspend_cpu_num >= 2)
+		if(suspend_cpu_num >= 1)
 			suspend_cpu_num = 1;
 	break;
 	default:
@@ -128,8 +128,8 @@ static inline void cpu_online_all(void)
 	unsigned int cpu;
 	switch(endurance_level){
 	case 1:
-		if(resume_cpu_num > 2 || resume_cpu_num == 1)
-		resume_cpu_num = 2;
+		if(resume_cpu_num > 1)
+		resume_cpu_num = 1;
 	break;
 	case 2:
 		if(resume_cpu_num > 1)
