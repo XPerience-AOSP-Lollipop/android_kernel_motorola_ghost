@@ -57,7 +57,7 @@
 static int suspend_cpu_num = 1;
 static int resume_cpu_num = 2;
 static int endurance_level = 0;
-static int device_cpu = 2;
+static int device_cpu = 1;
 static int core_limit = 2;
 
 /*#define CPU_UP_THRESHOLD      (65)
