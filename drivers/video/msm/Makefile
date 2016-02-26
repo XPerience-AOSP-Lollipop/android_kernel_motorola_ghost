@@ -53,6 +53,9 @@ obj-$(CONFIG_ARCH_MSM7X27A) += msm_dss_io_7x27a.o
 obj-$(CONFIG_ARCH_MSM8X60) += msm_dss_io_8x60.o
 obj-$(CONFIG_ARCH_MSM8960) += msm_dss_io_8960.o
 
+#LCD_NOTIFY
+obj-$(CONFIG_KLZZ_LCD_NOTIFY) += lcd_notify.o
+
 # EBI2
 obj-$(CONFIG_FB_MSM_EBI2) += ebi2_lcd.o
 
