@@ -4,6 +4,7 @@ obj-$(CONFIG_CPU_FREQ)			+= cpufreq.o cpu-boost.o
 obj-$(CONFIG_CPU_FREQ_STAT)             += cpufreq_stats.o
 
 # CPUfreq governors 
+obj-$(CONFIG_CPU_FREQ_GOV_BIOSHOCK)	+= cpufreq_bioshock.o
 obj-$(CONFIG_CPU_FREQ_GOV_PERFORMANCE)	+= cpufreq_performance.o
 obj-$(CONFIG_CPU_FREQ_GOV_POWERSAVE)	+= cpufreq_powersave.o
 obj-$(CONFIG_CPU_FREQ_GOV_USERSPACE)	+= cpufreq_userspace.o
