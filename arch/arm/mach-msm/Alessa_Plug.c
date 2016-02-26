@@ -34,6 +34,7 @@
  * and introducing touch boost
  * v1.4.1 Fix some logic
  * v1.4.2 Add some cpu idle info required if aren't present on cpufreq.c
+ * v1.5 -For ghost change the support of 4cores to 2cores and remove the hax code
  */
 #include <asm/cputime.h>
 #include <linux/module.h>
@@ -50,20 +51,20 @@
 
 #define ALESSAPLUG "AlessaPlug"
 #define ALESSA_VERSION 1
-#define ALESSA_SUB_VERSION 4
-#define ALESSA_MAINTENANCE 2
+#define ALESSA_SUB_VERSION 5
+#define ALESSA_MAINTENANCE 0
 
-static int suspend_cpu_num = 2;
-static int resume_cpu_num = 3;
+static int suspend_cpu_num = 1;
+static int resume_cpu_num = 2;
 static int endurance_level = 0;
-static int device_cpu = 4;
-static int core_limit = 4;
+static int device_cpu = 2;
+static int core_limit = 2;
 
 /*#define CPU_UP_THRESHOLD      (65)
 #define CPU_DOWN_DIFFERENTIAL (10)
 #define CPU_UP_AVERAGE_TIME   (10)
 #define CPU_DOWN_AVERAGE_TIME (10)*/
-#define CPU_LOAD_THRESHOLD    (65)
+#define CPU_LOAD_THRESHOLD    (75)
 
 #define DEF_SAMPLING_MS (500)
 
@@ -73,7 +74,7 @@ static int sampling_time = DEF_SAMPLING_MS;
 static int load_threshold = CPU_LOAD_THRESHOLD;
 
 static int alessa_HP_enabled = 1;//To enable or disable hotplug
-static int touch_boost_enabled = 0;
+static int touch_boost_enabled = 1;
 
 //Resume
 static struct workqueue_struct *Alessa_plug_resume_wq;
@@ -85,7 +86,7 @@ static struct delayed_work Alessa_plug_work;
 static struct workqueue_struct *Alessa_plug_boost_wq;
 static struct delayed_work Alessa_plug_touch_boost;
 //CPU CHARGE
-static unsigned int last_load[4] ={0, 0, 0, 0};
+static unsigned int last_load[2] ={0, 0};
 
 
 
@@ -101,59 +102,19 @@ struct cpu_load_data{
 
 static DEFINE_PER_CPU(struct cpu_load_data, cpuload);
 
-//HAX
-static inline u64 get_cpu_idle_time_jiffy(unsigned int cpu, u64 *wall)
-{
-	u64 idle_time;
-	u64 cur_wall_time;
-	u64 busy_time;
-
-	cur_wall_time = jiffies64_to_cputime64(get_jiffies_64());
-
-	busy_time = kcpustat_cpu(cpu).cpustat[CPUTIME_USER];
-	busy_time += kcpustat_cpu(cpu).cpustat[CPUTIME_SYSTEM];
-	busy_time += kcpustat_cpu(cpu).cpustat[CPUTIME_IRQ];
-	busy_time += kcpustat_cpu(cpu).cpustat[CPUTIME_SOFTIRQ];
-	busy_time += kcpustat_cpu(cpu).cpustat[CPUTIME_STEAL];
-	busy_time += kcpustat_cpu(cpu).cpustat[CPUTIME_NICE];
-
-	idle_time = cur_wall_time - busy_time;
-	if (wall)
-		*wall = cputime_to_usecs(cur_wall_time);
-
-	return cputime_to_usecs(idle_time);
-}
-
-u64 get_cpu_idle_time(unsigned int cpu, u64 *wall, int io_busy)
-{
-	u64 idle_time = get_cpu_idle_time_us(cpu, io_busy ? wall : NULL);
-
-	if (idle_time == -1ULL)
-		return get_cpu_idle_time_jiffy(cpu, wall);
-	else if (!io_busy)
-		idle_time += get_cpu_iowait_time_us(cpu, wall);
-
-	return idle_time;
-}
-EXPORT_SYMBOL_GPL(get_cpu_idle_time);
-
 //
 static inline void offline_cpu(void)
 {
 	unsigned int cpu;
 	switch(endurance_level){
 	case 1:
-		if(suspend_cpu_num >= 3)
-			suspend_cpu_num = 3;
-	break;
-	case 2:
 		if(suspend_cpu_num >= 2)
-			suspend_cpu_num = 2;
+			suspend_cpu_num = 1;
 	break;
 	default:
 	break;
 }
-	for(cpu = 3; cpu >(suspend_cpu_num - 1); cpu--) {
+	for(cpu = 2; cpu >(suspend_cpu_num - 1); cpu--) {
 		if(cpu_online(cpu))
 			cpu_down(cpu);
 }
@@ -175,8 +136,8 @@ static inline void cpu_online_all(void)
 			resume_cpu_num =1;
 	break;
 	case 0:
-	if(resume_cpu_num < 3)
-		resume_cpu_num =3;
+	if(resume_cpu_num < 1)
+		resume_cpu_num = 1;
 	break;
 	default:
 	break;
@@ -215,7 +176,7 @@ an error indication
 static void __ref alessa_plug_boost_work_fn(struct work_struct *work)
 {
 	int cpu;
-	for(cpu = 1; cpu < 4; cpu++){
+	for(cpu = 1; cpu < 2; cpu++){
 		if(cpu_is_offline(cpu))
 			cpu_up(cpu);
 	}
@@ -303,7 +264,7 @@ static ssize_t alessa_plug_suspend_cpu_store(struct kobject *kobj, struct kobj_a
 {//This check How many cores are active
 	int val;
 	sscanf(buf, "%d", &val);
-	if(val < 1 || val > 3)
+	if(val < 1 || val > 2)
 		pr_info("%s: suspend cpus off-limits\n", ALESSAPLUG);
 	else
 		suspend_cpu_num = val;
@@ -471,16 +432,16 @@ static void __cpuinit alessa_plug_work_fn(struct work_struct *work)
 	switch(endurance_level)
 {
 	case 0:
-		core_limit = 3;
+		core_limit = 2;
 	break;
 	case 1:
-		core_limit = 2;
+		core_limit = 1;
 	break;
 	case 2:
 		core_limit = 0;
 	break;
 	default:
-		core_limit = 3;
+		core_limit = 2;
 	break;
 	}
 	for(i=0; i < core_limit; i++){
@@ -497,7 +458,7 @@ static void __cpuinit alessa_plug_work_fn(struct work_struct *work)
 	if(cpu_online(i) && average_load[i] > load_threshold && cpu_is_offline(i+1))
 	{
 	pr_info("Alessa Plug: Bringing back cpu %d\n",i);
-		if(!((i+1) > 3))
+		if(!((i+1) > 2))
 			cpu_up(i+1);
 }
 else if(cpu_online(i) && average_load[i] < load_threshold && cpu_online (i+1))
@@ -557,14 +518,14 @@ static ssize_t alessa_plug_ver_show(struct kobject *kobj, struct kobj_attribute 
 }
 
 static struct kobj_attribute alessa_plug_ver_attribute =
-       __ATTR(version,
-               0444,
-               alessa_plug_ver_show, NULL);
+   __ATTR(version,
+     0444,
+     alessa_plug_ver_show, NULL);
 
 static struct kobj_attribute alessa_plug_suspend_cpu_attribute =
-       __ATTR(suspend_cpus,
-               0666,
-               alessa_plug_suspend_cpu, alessa_plug_suspend_cpu_store);
+  __ATTR(suspend_cpus,
+    0666,
+    alessa_plug_suspend_cpu, alessa_plug_suspend_cpu_store);
 
 static struct kobj_attribute alessa_plug_endurance_attribute =
 	__ATTR(endurance_level,
@@ -593,8 +554,8 @@ static struct kobj_attribute alessa_plug_tb_enabled_attribute =
 
 static struct attribute *alessa_plug_attrs[] =
     {
-        &alessa_plug_ver_attribute.attr,
-        &alessa_plug_suspend_cpu_attribute.attr,
+  &alessa_plug_ver_attribute.attr,
+  &alessa_plug_suspend_cpu_attribute.attr,
 	&alessa_plug_endurance_attribute.attr,
 	&alessa_plug_sampling_attribute.attr,
 	&alessa_plug_load_attribute.attr,
