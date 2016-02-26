@@ -1,7 +1,7 @@
 /*
  * drivers/cpufreq/cpufreq_xperience.c
  *
- * Copyright (C) 2011-2014 The XPerience PRoject
+ * Copyright (C) 2011-2016 The XPerience PRoject
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
@@ -28,7 +28,7 @@
 #include <linux/moduleparam.h>
 #include <linux/notifier.h>
 #include <asm/cputime.h>
-#include <linux/powersuspend.h>
+#include <linux/earlysuspend.h>
 
 
 #define cputime64_add(__a, __b) ((__a) + (__b))
@@ -41,7 +41,7 @@
  * towards the ideal frequency and slower after it has passed it. Similarly,
  * lowering the frequency towards the ideal frequency is faster than below it.
  */
-#define DEFAULT_AWAKE_IDEAL_FREQ 998400
+#define DEFAULT_AWAKE_IDEAL_FREQ 1242000
 static unsigned int awake_ideal_freq;
 
 /*
@@ -50,7 +50,7 @@ static unsigned int awake_ideal_freq;
  * that practically when sleep_ideal_freq==0 the awake_ideal_freq is used
  * also when suspended).
  */
-#define DEFAULT_SLEEP_IDEAL_FREQ 787200 /*I Think 782mhz are good :D*/
+#define DEFAULT_SLEEP_IDEAL_FREQ 810000 /*I Think 782mhz are good :D*/
 static unsigned int sleep_ideal_freq;
 
 /*
@@ -72,7 +72,7 @@ static unsigned int ramp_down_step;
 /*
  * CPU freq will be increased if measured load > max_cpu_load;
  */
-#define DEFAULT_MAX_CPU_LOAD 60
+#define DEFAULT_MAX_CPU_LOAD 70
 static unsigned long max_cpu_load;
 
 /*
@@ -800,7 +800,7 @@ static void xperience_suspend(int cpu, int suspend)
 	reset_timer(smp_processor_id(),this_xperience);
 }
 
-static void xperience_early_suspend(struct power_suspend *handler) {
+static void xperience_early_suspend(struct early_suspend *handler) {
 	int i;
 	if (suspended || sleep_ideal_freq==0) // disable behavior for sleep_ideal_freq==0
 		return;
@@ -809,7 +809,7 @@ static void xperience_early_suspend(struct power_suspend *handler) {
 		xperience_suspend(i,1);
 }
 
-static void xperience_late_resume(struct power_suspend *handler) {
+static void xperience_late_resume(struct early_suspend *handler) {
 	int i;
 	if (!suspended) // already not suspended so nothing to do
 		return;
@@ -818,7 +818,7 @@ static void xperience_late_resume(struct power_suspend *handler) {
 		xperience_suspend(i,0);
 }
 
-static struct power_suspend xperience_power_suspend = {
+static struct early_suspend xperience_power_suspend = {
 	.suspend = xperience_early_suspend,
 	.resume = xperience_late_resume,
 };
@@ -869,7 +869,7 @@ static int __init cpufreq_xperience_init(void)
 
 	INIT_WORK(&freq_scale_work, cpufreq_xperience_freq_change_time_work);
 
-	register_power_suspend(&xperience_power_suspend);
+	register_early_suspend(&xperience_power_suspend);
 
 	return cpufreq_register_governor(&cpufreq_gov_xperience);
 }
