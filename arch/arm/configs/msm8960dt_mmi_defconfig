@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm 3.4.42 Kernel Configuration
+# Linux/arm 3.4.74 Kernel Configuration
 #
 CONFIG_ARM=y
 CONFIG_ARM_HAS_SG_CHAIN=y
@@ -509,6 +509,7 @@ CONFIG_MSM_QDSP6_CODECS=y
 CONFIG_MSM_AUDIO_QDSP6=y
 # CONFIG_MSM_AUDIO_QDSP6V2 is not set
 # CONFIG_MSM_ULTRASOUND is not set
+CONFIG_ALESSA_PLUG=y
 # CONFIG_MSM_SPM_V1 is not set
 CONFIG_MSM_SPM_V2=y
 CONFIG_MSM_L2_SPM=y
