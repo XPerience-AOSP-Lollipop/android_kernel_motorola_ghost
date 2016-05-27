@@ -13,6 +13,8 @@
 #include <linux/module.h>
 #include "msm_actuator.h"
 
+#define MAX_NUMBER_OF_STEPS 47
+
 static uint8_t lens_mode;
 
 static struct msm_actuator_ctrl_t msm_actuator_t;
@@ -208,8 +210,11 @@ static int32_t msm_actuator_piezo_move_focus(
 	int32_t rc = 0;
 	int32_t num_steps = move_params->num_steps;
 
-	if (num_steps == 0)
-		return rc;
+	if (num_steps <= 0 || num_steps > MAX_NUMBER_OF_STEPS) {
+		pr_err("num_steps out of range = %d\n",
+			num_steps);
+		return -EFAULT;
+	}
 
 	a_ctrl->i2c_tbl_index = 0;
 	rc = a_ctrl->func_tbl->
