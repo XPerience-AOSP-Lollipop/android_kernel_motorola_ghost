@@ -97,6 +97,7 @@ static unsigned long above_hispeed_delay_val;
 
 static int boost_val;
 
+<<<<<<< HEAD
 static inline cputime64_t get_cpu_idle_time_jiffy(unsigned int cpu,
 						  cputime64_t *wall)
 {
@@ -332,11 +333,20 @@ static u64 update_load(int cpu)
 		active_time = delta_time - delta_idle;
 
 	pcpu->cputime_speedadj += active_time * pcpu->policy->cur;
+=======
+static int cpufreq_governor_interactive(struct cpufreq_policy *policy,
+		unsigned int event);
+>>>>>>> parent of 0fe673f... cpufreq: interactive: Move definition of cpufreq_gov_interactive downwards
 
-	pcpu->time_in_idle = now_idle;
-	pcpu->time_in_idle_timestamp = now;
-	return now;
-}
+#ifndef CONFIG_CPU_FREQ_DEFAULT_GOV_INTERACTIVE
+static
+#endif
+struct cpufreq_governor cpufreq_gov_interactive = {
+	.name = "interactive",
+	.governor = cpufreq_governor_interactive,
+	.max_transition_latency = 10000000,
+	.owner = THIS_MODULE,
+};
 
 static void cpufreq_interactive_timer(unsigned long data)
 {
@@ -1015,20 +1025,6 @@ static int cpufreq_governor_interactive(struct cpufreq_policy *policy,
 		break;
 	}
 	return 0;
-}
-
-#ifndef CONFIG_CPU_FREQ_DEFAULT_GOV_INTERACTIVE
-static
-#endif
-struct cpufreq_governor cpufreq_gov_interactive = {
-	.name = "interactive",
-	.governor = cpufreq_governor_interactive,
-	.max_transition_latency = 10000000,
-	.owner = THIS_MODULE,
-};
-
-static void cpufreq_interactive_nop_timer(unsigned long data)
-{
 }
 
 static int __init cpufreq_interactive_init(void)
