@@ -5476,6 +5476,7 @@ EXPORT_SYMBOL(__cfg80211_alloc_event_skb);
 
 void __cfg80211_send_event_skb(struct sk_buff *skb, gfp_t gfp)
 {
+        struct cfg80211_registered_device *rdev = ((void **)skb->cb)[0];
 	void *hdr = ((void **)skb->cb)[1];
 	struct nlattr *data = ((void **)skb->cb)[2];
 
