@@ -67,11 +67,8 @@
 #include <linux/syscalls.h>
 #include <linux/capability.h>
 #include <linux/fs_struct.h>
-<<<<<<< HEAD
 #include <linux/compat.h>
-=======
 #include <linux/uaccess.h>
->>>>>>> 4f48994... BACKPORT: audit: fix a double fetch in audit_log_single_execve_arg()
 
 #include "audit.h"
 
