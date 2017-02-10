@@ -3506,7 +3506,7 @@ static struct rcg_clk gfx2d1_clk = {
 		.ops = &clk_ops_rcg,
 		.flags = CLKFLAG_SKIP_HANDOFF,
 		VDD_DIG_FMAX_MAP3(LOW,  100000000, NOMINAL, 200000000,
-				  HIGH, 228571000),
+				  HIGH, 266670000),
 		CLK_INIT(gfx2d1_clk.c),
 	},
 };
