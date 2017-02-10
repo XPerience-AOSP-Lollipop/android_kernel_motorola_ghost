@@ -178,6 +178,11 @@ static inline int msm_register_domain(struct msm_iova_layout *layout)
 {
 	return -ENODEV;
 }
+
+static inline int msm_unregister_domain(struct iommu_domain *domain)
+{
+	return -ENODEV;
+}
 #endif
 
 #endif

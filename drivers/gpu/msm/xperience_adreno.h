@@ -15,4 +15,9 @@
 
 extern int msm_unregister_domain(struct iommu_domain *domain);
 
+inline int msm_unregister_domain(struct iommu_domain *domain)
+{
+	return -ENODEV;
+}
+
 #endif
