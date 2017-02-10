@@ -62,12 +62,12 @@ static int __secure_tz_entry(u32 cmd, u32 val, u32 id)
 #else
 static int __secure_tz_entry(u32 cmd, u32 val, u32 id)
 {
-	int ret;
+	//int ret;
 	spin_lock(&tz_lock);
 	/* sync memory before sending the commands to tz*/
 	__iowmb();
 	//ret = scm_call_atomic3(SCM_SVC_IO, cmd, val1, val2,
-				val3);
+//				val3);
 	spin_unlock(&tz_lock);
 	return scm_call_atomic3(SCM_SVC_IO, cmd, val1, val2,
 				val3);
