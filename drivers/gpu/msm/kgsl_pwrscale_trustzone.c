@@ -65,10 +65,11 @@ static int __secure_tz_entry3(u32 cmd, u32 val1, u32 val2,
 	spin_lock(&tz_lock);
 	/* sync memory before sending the commands to tz*/
 	__iowmb();
-	ret = scm_call_atomic3(SCM_SVC_IO, cmd, val1, val2,
+	//ret = scm_call_atomic3(SCM_SVC_IO, cmd, val1, val2,
 				val3);
 	spin_unlock(&tz_lock);
-	return ret;
+	return scm_call_atomic3(SCM_SVC_IO, cmd, val1, val2,
+				val3);
 }
 
 static ssize_t tz_governor_show(struct kgsl_device *device,

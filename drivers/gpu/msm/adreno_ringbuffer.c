@@ -22,6 +22,7 @@
 #include "kgsl_sharedmem.h"
 #include "kgsl_cffdump.h"
 #include "kgsl_trace.h"
+#include "kgsl_pwrctrl.h"
 
 #include "adreno.h"
 #include "adreno_pm4types.h"
