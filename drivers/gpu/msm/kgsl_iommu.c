@@ -33,6 +33,7 @@
 #include "kgsl_trace.h"
 #include "z180.h"
 #include "kgsl_cffdump.h"
+#include "xperience_adreno.h"
 
 
 static struct kgsl_iommu_register_list kgsl_iommuv1_reg[KGSL_IOMMU_REG_MAX] = {
