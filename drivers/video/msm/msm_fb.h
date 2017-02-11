@@ -225,7 +225,6 @@ struct msm_fb_data_type {
 	void *copy_splash_buf;
 	unsigned char *copy_splash_phys;
 	uint32 sec_mapped;
-	uint32 sec_active;
 	bool (*is_partial_mode_supported)(void);
 	bool (*is_quickdraw_enabled)(void);
 	void (*quickdraw_mdp_resume)(void);
