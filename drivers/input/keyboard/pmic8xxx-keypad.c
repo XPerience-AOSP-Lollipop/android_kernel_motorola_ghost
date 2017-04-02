@@ -83,6 +83,11 @@
 
 #define KEYP_CLOCK_FREQ			32768
 
+#define EXTRA_DEBOUNCE_TIME_MS		40
+static unsigned long extra_debounce_timeout = 0;
+static int last_released = -1;
+static int release_to_ignore = -1;
+
 /**
  * struct pmic8xxx_kp - internal keypad data structure
  * @pdata - keypad platform data pointer
@@ -280,6 +285,24 @@ static void __pmic8xxx_kp_scan_matrix(struct pmic8xxx_kp *kp, u16 *new_state,
 					"pressed" : "released");
 
 			code = MATRIX_SCAN_CODE(row, col, PM8XXX_ROW_SHIFT);
+
+			if (!(new_state[row] & (1 << col))) {	// key pressed
+				if (code == last_released &&
+						time_before(jiffies, extra_debounce_timeout)) {
+					dev_dbg(kp->dev, "extra debounce: press ignored");
+					release_to_ignore = code;
+					continue;
+				}
+			} else {				// key released
+				if (code == release_to_ignore) {
+					dev_dbg(kp->dev, "extra debounce: release ignored");
+					release_to_ignore = -1;
+					continue;
+				}
+				extra_debounce_timeout = jiffies +
+						msecs_to_jiffies(EXTRA_DEBOUNCE_TIME_MS);
+				last_released = code;
+			}
 
 			input_event(kp->input, EV_MSC, MSC_SCAN, code);
 			input_report_key(kp->input,
