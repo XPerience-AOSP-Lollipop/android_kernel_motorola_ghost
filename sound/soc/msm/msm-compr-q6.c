@@ -724,6 +724,7 @@ static int msm_compr_open(struct snd_pcm_substream *substream)
 	}
 	prtd = &compr->prtd;
 	prtd->substream = substream;
+	prtd->audio_client->perf_mode = false;
 	runtime->render_flag = SNDRV_DMA_MODE;
 	prtd->audio_client = q6asm_audio_client_alloc(
 				(app_cb)compr_event_handler, compr);
