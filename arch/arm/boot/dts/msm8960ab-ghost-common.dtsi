@@ -20,6 +20,23 @@
 
 	mmi,dt_revision = <2>;
 
+	firmware: firmware {
+		android {
+			compatible = "android,firmware";
+			fstab {
+				compatible = "android,fstab";
+				system {
+					compatible = "android,system";
+					dev = "/dev/block/platform/msm_sdcc.1/by-name/system";
+					type = "ext4";
+					mnt_flags = "ro,barrier=1,discard";
+					fsmgr_flags = "wait";
+					status = "ok";
+				};
+			};
+		};
+	};
+
 	System@0 {
 		Display@0 {
 			panel_name = "mipi_mot_cmd_smd_hd_465";
