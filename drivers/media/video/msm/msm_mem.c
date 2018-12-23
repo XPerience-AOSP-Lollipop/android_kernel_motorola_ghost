@@ -75,7 +75,6 @@ static DEFINE_MUTEX(hlist_mut);
 static int check_pmem_info(struct msm_pmem_info *info, int len)
 {
 	if (info->offset < len &&
-		nfo->offset <= (UINT_MAX - info->len) &&
 		info->offset + info->len <= len &&
 		info->planar0_off < len &&
 		info->planar1_off < len)
