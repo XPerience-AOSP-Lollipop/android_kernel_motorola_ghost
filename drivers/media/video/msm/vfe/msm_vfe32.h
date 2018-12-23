@@ -1026,7 +1026,6 @@ struct vfe_share_ctrl_t {
 	uint8_t stream_error;
 	uint32_t rdi_comp;
 	uint32_t overflow_count;
-	uint8_t stop_issued;
 };
 
 struct axi_ctrl_t {
