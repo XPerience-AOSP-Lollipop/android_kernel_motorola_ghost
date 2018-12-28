@@ -44,7 +44,6 @@ static DEFINE_MUTEX(binder_main_lock);
 
 #define BINDER_MIN_ALLOC (1 * PAGE_SIZE)
 
-static DEFINE_MUTEX(binder_lock);
 static DEFINE_MUTEX(binder_deferred_lock);
 static DEFINE_MUTEX(binder_mmap_lock);
 
@@ -3198,8 +3197,11 @@ static int binder_open(struct inode *nodp, struct file *filp)
 	INIT_LIST_HEAD(&proc->todo);
 	init_waitqueue_head(&proc->wait);
 	proc->default_priority = task_nice(current);
+
+        binder_lock(__func__);
+
 	INIT_LIST_HEAD(&proc->buffers);
-	mutex_lock(&binder_lock);
+	//mutex_lock(&binder_lock);
 	binder_stats_created(BINDER_STAT_PROC);
 	hlist_add_head(&proc->proc_node, &binder_procs);
 	proc->pid = current->group_leader->pid;
