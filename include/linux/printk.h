@@ -106,6 +106,11 @@ int printk(const char *fmt, ...);
 __printf(1, 2) __cold int printk_deferred(const char *fmt, ...);
 
 /*
+ * Special printk facility for scheduler use only, _DO_NOT_USE_ !
+ */
+__printf(1, 2) __cold int printk_sched(const char *fmt, ...);
+
+/*
  * Please don't use printk_ratelimit(), because it shares ratelimiting state
  * with all other unrelated printk_ratelimit() callsites.  Instead use
  * printk_ratelimited() or plain old __ratelimit().
@@ -134,6 +139,11 @@ int printk(const char *s, ...)
 }
 static inline __printf(1, 2) __cold
 int printk_deferred(const char *s, ...)
+{
+	return 0;
+}
+static inline __printf(1, 2) __cold
+int printk_sched(const char *s, ...)
 {
 	return 0;
 }
