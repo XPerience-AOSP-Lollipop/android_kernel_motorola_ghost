@@ -672,7 +672,7 @@ static struct binder_buffer *binder_buffer_lookup(struct binder_proc *proc,
 {
 	struct rb_node *n = proc->allocated_buffers.rb_node;
 	struct binder_buffer *buffer;
-	void *kern_ptr;
+	struct binder_buffer *kern_ptr;
 
 	kern_ptr = (struct binder_buffer *)(user_ptr - proc->user_buffer_offset
 		- offsetof(struct binder_buffer, data));
@@ -681,9 +681,9 @@ static struct binder_buffer *binder_buffer_lookup(struct binder_proc *proc,
 		buffer = rb_entry(n, struct binder_buffer, rb_node);
 		BUG_ON(buffer->free);
 
-		if (kern_ptr < buffer->data)
+		if (kern_ptr < buffer)
 			n = n->rb_left;
-		else if (kern_ptr > buffer->data)
+		else if (kern_ptr > buffer)
 			n = n->rb_right;
 		else
 			return buffer;
